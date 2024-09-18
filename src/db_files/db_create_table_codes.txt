@@ -1,0 +1,86 @@
+CREATE TABLE IF NOT EXISTS public.comments
+(
+    id integer NOT NULL DEFAULT nextval('comments_id_seq'::regclass),
+    comment_text text COLLATE pg_catalog."default" NOT NULL,
+    parent_id integer,
+    type "char",
+    board_id integer,
+    depth integer,
+    comment_user text COLLATE pg_catalog."default",
+    CONSTRAINT comments_pkey PRIMARY KEY (id)
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.favorites
+(
+    id integer NOT NULL,
+    name text COLLATE pg_catalog."default",
+    CONSTRAINT favorites_pkey PRIMARY KEY (id)
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.it_roles
+(
+    id integer NOT NULL DEFAULT nextval('it_roles_id_seq'::regclass),
+    role_name character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT it_roles_pkey PRIMARY KEY (id)
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.it_roles
+(
+    id integer NOT NULL DEFAULT nextval('it_roles_id_seq'::regclass),
+    role_name character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT it_roles_pkey PRIMARY KEY (id)
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.role_subject_votes
+(
+    role_id integer NOT NULL,
+    subject_id integer NOT NULL,
+    votes integer DEFAULT 0,
+    CONSTRAINT role_subject_votes_pkey PRIMARY KEY (role_id, subject_id),
+    CONSTRAINT role_subject_votes_role_id_fkey FOREIGN KEY (role_id)
+        REFERENCES public.it_roles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT role_subject_votes_subject_id_fkey FOREIGN KEY (subject_id)
+        REFERENCES public.subjects (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.roles_subjects
+(
+    id integer NOT NULL DEFAULT nextval('roles_subjects_id_seq'::regclass),
+    role_id integer NOT NULL,
+    subject_id integer NOT NULL,
+    CONSTRAINT roles_subjects_pkey PRIMARY KEY (id),
+    CONSTRAINT roles_subjects_role_id_subject_id_key UNIQUE (role_id, subject_id),
+    CONSTRAINT roles_subjects_role_id_fkey FOREIGN KEY (role_id)
+        REFERENCES public.it_roles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT roles_subjects_subject_id_fkey FOREIGN KEY (subject_id)
+        REFERENCES public.subjects (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+
+
+CREATE TABLE IF NOT EXISTS public.subjects
+(
+    id integer NOT NULL,
+    name text COLLATE pg_catalog."default",
+    info text COLLATE pg_catalog."default",
+    CONSTRAINT subjects_pkey PRIMARY KEY (id)
+)
+
